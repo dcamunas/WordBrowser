@@ -16,7 +16,7 @@ Con este comando se crearan los directorios de las clases objeto (*.o), al igual
 **$ make dirs**  
 
 ## Limpieza de directorios
-Este comando se ha utilizado para limpiar los directorios en los que se almacenan los ejecutables y las clases objetos (explicada anteriormente su creación).\
+Este comando se ha utilizado para limpiar los directorios en los que se almacenan los ejecutables y las clases objetos (explicada anteriormente su creación).
 
 * *Nota:* Es de muy buena ayuda a la hora de ejecutar la practica en distintos computadores, debido a que como bien es sabido, no se pueden ejecutar un fichero que ha sido compilado en un ordenador, en otro distinto. Esto se debe a que cada ordenador tiene un juego de instrucciones distinto.  
 **$ make clean**
