@@ -7,7 +7,7 @@
 La compilación y ejecución se realiza de forma automática gracias a la herramienta Makefile.
 
 ## Descripción
-Práctica perteneciente al laboratorio de la asignatura de *Sistemas Operativos II* (SSOO II) de *ESI - UCLM*.
+Práctica perteneciente al laboratorio de la asignatura de *Sistemas Operativos II* (SSOO II) de *ESI - UCLM*.  
 Desarrollada en el lenguaje *C++*. Cuyo objetivo es comprender el manejo de hilos (*threads*), como: su creación y su sincronización (con el uso de semáforos).
 La finalidad de este proyecto es la simulación de un buscador de palabras en un archivo de texto. Donde N hilos buscarán de forma concurrente, una ocurrencia de la palabra indicada por el usuario.
 
