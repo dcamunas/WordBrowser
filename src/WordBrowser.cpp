@@ -10,10 +10,10 @@
 /* Class constructor */
 WordBrowser::WordBrowser(int thread_id, int start_line, int end_line, std::string color)
 {
-    this->thread_id_ = thread_id;
-    this->start_line_ = start_line;
-    this->end_line_ = end_line;
-    this->color_ = color;
+    thread_id_ = thread_id;
+    start_line_ = start_line;
+    end_line_ = end_line;
+    color_ = color;
 }
 
 /* Class destructor */
@@ -33,32 +33,32 @@ void WordBrowser::add_ocurrence(int line, std::string word, std::string antecces
     /*Add struct to the list*/
     std::lock_guard<std::mutex> guard(sem);
     {
-        this->ocurrences_.push_back(*wf);
+        ocurrences_.push_back(*wf);
     }
 }
 
-int WordBrowser::get_start_line() { return this->start_line_; }
+int WordBrowser::get_start_line() { return start_line_; }
 
-int WordBrowser::get_end_line() { return this->end_line_; }
+int WordBrowser::get_end_line() { return end_line_; }
 
-int WordBrowser::get_thread_id() { return this->thread_id_; }
+int WordBrowser::get_thread_id() { return thread_id_; }
 
-int WordBrowser::get_ocurrences_number() { return this->ocurrences_.size(); }
+int WordBrowser::get_ocurrences_number() { return ocurrences_.size(); }
 
 /* Print information from a Word */
 void WordBrowser::print_occurrence(WordFinded wf)
 {
-    std::cout << this-> color_ << "\t[Thread " << this->thread_id_ + 1 << " Start: " << this->start_line_ << " - end: " << this->end_line_ << "]" << RESET;
+    std::cout <<  color_ << "\t[Thread " << thread_id_ + 1 << " Start: " << start_line_ << " - end: " << end_line_ << "]" << RESET;
     std::cout << " :: " << "line " << wf.line << " :: " << "... " << wf.anteccessor << " " 
-    << this->color_ << wf.word << RESET << " " << wf.successor << " ..." << std::endl;
+    << color_ << wf.word << RESET << " " << wf.successor << " ..." << std::endl;
 }
 
 /* Print all information from WordBrowser */
 void WordBrowser::print()
 {
-    while(!this->ocurrences_.empty())
+    while(!ocurrences_.empty())
     {
-        print_occurrence(this->ocurrences_.front());
-        this->ocurrences_.pop_front();
+        print_occurrence(ocurrences_.front());
+        ocurrences_.pop_front();
     }  
 }
