@@ -21,7 +21,7 @@ WordBrowser::~WordBrowser() {}
 
 /* Class methods */
 
-void WordBrowser::add_ocurrence(int line, std::string word, std::string anteccessor, std::string successor, std::mutex &sem)
+void WordBrowser::add_ocurrence(int line, std::string word, std::string anteccessor, std::string successor)
 {
     /* Generate a new struct (WordFinded)*/
     WordFinded *wf = new WordFinded;
@@ -31,7 +31,6 @@ void WordBrowser::add_ocurrence(int line, std::string word, std::string antecces
     wf->successor = successor;
 
     /*Add struct to the list*/
-    std::lock_guard<std::mutex> guard(sem);
     {
         ocurrences_.push_back(*wf);
     }

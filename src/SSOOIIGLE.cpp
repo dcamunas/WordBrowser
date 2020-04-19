@@ -13,7 +13,6 @@
 #include <definitions.h>
 #include <WordBrowser.h>
 
-
 void parse_argv(int argc, char *argv[], std::string &word, std::string &file_path);
 void print_title();
 std::string open_file(std::string file);
@@ -30,14 +29,12 @@ void get_word_info(int position, std::vector<std::string> line_st, std::string &
 void wait_threads();
 void print_result();
 
-
 /* Global variables */
-int threads_number_;                        // Thread's total number
-std::vector<std::thread> threads_vector_;   // Threads vector
-unsigned int ocurrences_number_ = 0;        // Occurrences total number
-std::mutex sem1, sem2;                      // Declaration of semaphores used
-std::vector<WordBrowser> wb_vector_;        // Instances WordBrowser vector
-
+int threads_number_;                      // Thread's total number
+std::vector<std::thread> threads_vector_; // Threads vector
+unsigned int ocurrences_number_ = 0;      // Occurrences total number
+std::mutex sem;                    // Declaration of semaphores used
+std::vector<WordBrowser> wb_vector_;      // Instances WordBrowser vector
 
 int main(int argc, char *argv[])
 {
@@ -139,10 +136,10 @@ void assign_generate_threads(int thread_lines, int rest_lines, std::string word,
 void launch_threads(int thread_id, int start_line, int end_line, std::string word, std::string file_path, int &c)
 {
     std::string colors[COLORS_NUMBER] = {GREEN, RED, BLUE, YELLOW, MAGENTA, CYAN};
-    
+
     /* Check if there are more threads than colors*/
     thread_id > COLORS_NUMBER - 1 ? c = 0 : c;
-    
+
     wb_vector_.push_back(WordBrowser(thread_id, start_line, end_line, colors[c]));
     threads_vector_.push_back(std::thread(search, thread_id, word, file_path));
 }
@@ -157,8 +154,11 @@ void search(int thread_id, std::string word, std::string file_path)
     std::vector<std::string> line_words;
 
     int start_line, end_line;
+    
+    sem.lock();
     start_line = wb_vector_[thread_id].get_start_line();
     end_line = wb_vector_[thread_id].get_end_line();
+    sem.unlock();
 
     fs.open(file_path, std::ios::in);
 
@@ -170,6 +170,7 @@ void search(int thread_id, std::string word, std::string file_path)
             line_words = string_tokenizer(line);
             search_word(i, thread_id, word, line_words);
         }
+        line_words.clear();
     }
 
     /* Add ocurrences to 'ocurrences_number_' */
@@ -187,7 +188,9 @@ void search_word(int line, int thread_id, std::string word, std::vector<std::str
         {
             get_word_info(pos, line_words, anteccessor, successor);
 
-            wb_vector_[thread_id].add_ocurrence(line, line_words[pos], anteccessor, successor, sem1);
+            sem.lock();
+            wb_vector_[thread_id].add_ocurrence(line, line_words[pos], anteccessor, successor);
+            sem.unlock();
         }
     }
 }
@@ -229,7 +232,7 @@ bool equals(std::string word_compare, std::string word)
 /* Increment ocurrences number */
 void add_occurrences_number(int thread_id)
 {
-    std::lock_guard<std::mutex> guard(sem2);
+    std::lock_guard<std::mutex> guard(sem);
     {
         ocurrences_number_ += wb_vector_[thread_id].get_ocurrences_number();
     }
@@ -260,22 +263,24 @@ void wait_threads()
 /*Print title (SSOOIIGLE) */
 void print_title()
 {
-    std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl; 
+    std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << "\t\t\t\t********  " << BOLDBLUE << "SS" << BOLDRED "O" << BOLDYELLOW << "O" << BOLDBLUE "II" << BOLDGREEN << "GL"
-     << BOLDRED "E" << RESET "  ********\n"<< std::endl;
+              << BOLDRED "E" << RESET "  ********\n"
+              << std::endl;
 }
 
 /* Print search result */
 void print_result()
 {
-    std::cout << "[X] Número de " << BOLDGREEN << "hilos" << RESET << " lanzados: " << BOLDGREEN << threads_number_ << RESET << std::endl;
-    std::cout << "[X] Número de " << BOLDRED << "ocurrencias" << RESET << " encontradas: " << BOLDRED << ocurrences_number_ << RESET << "\n" << std::endl;
+    std::cout << "[X] Number of " << BOLDGREEN << "threads" << RESET << " launched: " << BOLDGREEN << threads_number_ << RESET << std::endl;
+    std::cout << "[X] Number of " << BOLDRED << "occurrencess" << RESET << " founds: " << BOLDRED << ocurrences_number_ << RESET << "\n"
+              << std::endl;
     for (unsigned int i = 0; i < wb_vector_.size(); i++)
     {
         wb_vector_[i].print();
-    }  
+    }
 
-    std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl; 
-    std::cout << "\t\t\t\t********  " << BOLDGREEN "PROGRAM FINALIZED" << RESET << "  ********\n" << std::endl;
-
+    std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl;
+    std::cout << "\t\t\t\t********  " << BOLDGREEN "PROGRAM FINALIZED" << RESET << "  ********\n"
+              << std::endl;
 }

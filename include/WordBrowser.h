@@ -26,7 +26,7 @@ private:
 public:
     WordBrowser(int thread_id, int start_line, int end_line, std::string color);
     ~WordBrowser();
-    void add_ocurrence(int line, std::string word, std::string antecessor, std::string successor, std::mutex &sem);
+    void add_ocurrence(int line, std::string word, std::string antecessor, std::string successor);
     int get_start_line();
     int get_end_line();
     int get_thread_id();
